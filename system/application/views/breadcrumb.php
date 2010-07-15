@@ -23,4 +23,6 @@
     <div class="current">
         <?php echo $breadcrumb[$size - 1]['name'] ?>
     </div>
+    <!-- Search box open button -->
+    <div class="search_open" id="search_open">Search</div>
 </div>

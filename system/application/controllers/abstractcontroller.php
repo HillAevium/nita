@@ -142,6 +142,9 @@ abstract class AbstractController extends Controller {
             $args['breadcrumb'] = $this->load->view('breadcrumb', $breadcrumb, true);
         }
         
+        // Load the search box for injection
+        $args['searchbox'] = $this->load->view('searchbox', null, true);
+        
         // Load the content pane for injection
         $args['content'] = '';
         foreach($views as $view) {

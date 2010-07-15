@@ -14,6 +14,8 @@ class Soap {
     // Date Format -> March 23rd, 2009
     private $dateFormat = 'n/j/Y';
     
+    private $programTypeMap = array();
+    
     /**
      * Construct a new Soap API object
      */
@@ -22,6 +24,11 @@ class Soap {
         $soap = $CI->config->item('soap');
         $this->soapUrl    = $soap['server'];
         $this->programUri = $soap['services']['programs'];
+        
+        $this->programTypeMap = array(
+            '47c4b583-eca9-dc11-b373-00304832346b' => 'Trial Advocacy',
+            '50c4b583-eca9-dc11-b373-00304832346b' => 'Deposition and Pretrial Skills'
+        );
     }
     
     public function getContent($id) {
@@ -171,6 +178,10 @@ class Soap {
         // Format text
         $programModel->description = nl2br($programModel->description);
         
+        // Format program types
+        if(key_exists($programModel->typeId, $this->programTypeMap)) {
+            $programModel->typeId = $this->programTypeMap[$programModel->typeId];
+        }
         return $programModel;
     }
     
