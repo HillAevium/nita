@@ -91,9 +91,10 @@ function handleSearchboxToggle() {
 function prepareFormForAjax(form) {
     form.ajaxForm();  
     form.submit(function() { 
+        
         // inside event callbacks 'this' is the DOM element so we first 
         // wrap it in a jQuery object and then invoke ajaxSubmit 
-        $(this).ajaxSubmit(options); 
+        $(this).ajaxSubmit(); 
  
         // !!! Important !!! 
         // always return false to prevent standard browser submit and page navigation 
@@ -111,7 +112,7 @@ function ajaxHandler() {
     // Remember the state that our forms are in
     // and handle the AJAX response.
     // There are 2 states: form, verify
-    $('forms_container').ajaxComplete(function(e, xhr, settings) {
+    $('#forms_container').ajaxComplete(function(e, xhr, settings) {
         if(typeof ajaxHandler.state == undefined) {
             ajaxHandler.state = 'form';
         }

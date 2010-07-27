@@ -327,11 +327,11 @@ class Account extends AbstractController {
         
         // Check for registration type in uri,
         // otherwise display funnel if not set
-        if(!$this->getArgument('type')) {
+        if(!$this->getArgument('regtype')) {
             $this->showRegistrationFunnel();
             return;
         } else {
-            $accountType = $this->getArgument('type');
+            $accountType = $this->getArgument('regtype');
             $this->showRegistrationForm($accountType);
         }
     }
