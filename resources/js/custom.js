@@ -123,6 +123,7 @@ function ajaxHandler() {
                     // Valid data
                     ajaxHandler.state = 'verify';
                     $("#registrationForm").hide();
+                    $("#error_container").html(xhr.responseText);
                     $("#verificationForm").show();
                     break;
                 case 400 : // BAD REQUEST
@@ -142,16 +143,17 @@ function ajaxHandler() {
                     break;
                 case 400 : // BAD REQUEST
                     // The verify ID was not found, redirect to home page
+                    $("#error_container").html(xhr.responseText);
                     $("#response_message").html('The verification code is invalid.');
                     break;
                 case 408 : // REQUEST TIMEOUT
                     // The form data will be removed and no user will be created
+                    $("#error_container").html(xhr.responseText);
                     $("#response_message").html('The verification code you entered is no longer valid. You will need to fill out the registration form again in order to receive a new verification code.');
                     break;
             }
         }
-    }
-    
+    });
 }
 ajaxHandler.state = 'form';
 
