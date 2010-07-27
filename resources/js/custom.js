@@ -89,10 +89,7 @@ function handleSearchboxToggle() {
 
 // takes a jQuery object as a param
 function prepareFormForAjax(form) {
-    var options = { 
-        success:       formCallback 
-    }
-    
+    form.ajaxForm();  
     form.submit(function() { 
         // inside event callbacks 'this' is the DOM element so we first 
         // wrap it in a jQuery object and then invoke ajaxSubmit 
@@ -105,6 +102,8 @@ function prepareFormForAjax(form) {
 }
 
 function addAjaxHandler() {
+    prepareFormForAjax($("#registration_form"));
+    prepareFormForAjax($("#validation_form"));
     ajaxHandler();
 }
 
@@ -124,6 +123,9 @@ function ajaxHandler() {
                     ajaxHandler.state = 'verify';
                     $("#registrationForm").hide();
                     $("#error_container").html(xhr.responseText);
+                    $("#continue").click(function() {
+                        document.forms['registration_form'].submit();
+                    });
                     $("#verificationForm").show();
                     break;
                 case 400 : // BAD REQUEST

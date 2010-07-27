@@ -326,7 +326,7 @@
                 <tr>
                     <td colspan="2">
                         <input name="isAttendingClasses" type="radio" value="0" /> No
-                        <input name="isAttendingClasses" type="radio" value="1" selected/> Yes
+                        <input name="isAttendingClasses" type="radio" value="1" checked="checked"/> Yes
                     </td>
                 </tr>
                 <tr>
@@ -337,7 +337,7 @@
                 <tr>
                     <td colspan="2">
                         <input name="haveScholarship" type="radio" value="0" /> No
-                        <input name="haveScholarship" type="radio" value="1" selected/> Yes
+                        <input name="haveScholarship" type="radio" value="1" checked="checked"/> Yes
                     </td>
                 </tr>
                 <tr>
@@ -348,7 +348,7 @@
                 <tr>
                     <td colspan="2">
                         <input name="requireAccessibility" type="radio" value="0" /> No
-                        <input name="requireAccessibility" type="radio" value="1" selected/> Yes
+                        <input name="requireAccessibility" type="radio" value="1" checked="checked"/> Yes
                     </td>
                 </tr>
                 <tr>
