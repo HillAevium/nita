@@ -87,10 +87,73 @@ function handleSearchboxToggle() {
     $("div#search_open").toggleClass("hide");
 }
 
-function displayErrors(errorHTML) {
-    $("#errors").html(errorsHTML)
-                .show();
+// takes a jQuery object as a param
+function prepareFormForAjax(form) {
+    var options = { 
+        success:       formCallback 
+    }
+    
+    form.submit(function() { 
+        // inside event callbacks 'this' is the DOM element so we first 
+        // wrap it in a jQuery object and then invoke ajaxSubmit 
+        $(this).ajaxSubmit(options); 
+ 
+        // !!! Important !!! 
+        // always return false to prevent standard browser submit and page navigation 
+        return false; 
+    }); 
 }
+
+function addAjaxHandler() {
+    ajaxHandler();
+}
+
+function ajaxHandler() {
+    // Remember the state that our forms are in
+    // and handle the AJAX response.
+    // There are 2 states: form, verify
+    $('forms_container').ajaxComplete(function(e, xhr, settings) {
+        if(typeof ajaxHandler.state == undefined) {
+            ajaxHandler.state = 'form';
+        }
+        // get the http status code from the response headers
+        if(ajaxHandler.state == 'form') {
+            switch(xhr.status) {
+                case 202 : // ACCEPTED
+                    // Valid data
+                    ajaxHandler.state = 'verify';
+                    $("#registrationForm").hide();
+                    $("#verificationForm").show();
+                    break;
+                case 400 : // BAD REQUEST
+                    // Invalid data
+                    $("#error_container").html(xhr.responseText);
+                    break;
+            }
+        } else if(ajaxHandler.state == 'verify') {
+            switch(xhr.status) {
+                case 201 : // ACCEPTED
+                    // Display a message to the user
+                    // Redirect them to referrer or profile page
+                    $("#verificationForm").hide();
+                    $("#error_container").html(xhr.responseText);
+                    $("#response_message").html('Your account is now verified. Go forth and have loads of fun. And always...ALWAYS...be safe.');
+                    window.location("/account/profile");
+                    break;
+                case 400 : // BAD REQUEST
+                    // The verify ID was not found, redirect to home page
+                    $("#response_message").html('The verification code is invalid.');
+                    break;
+                case 408 : // REQUEST TIMEOUT
+                    // The form data will be removed and no user will be created
+                    $("#response_message").html('The verification code you entered is no longer valid. You will need to fill out the registration form again in order to receive a new verification code.');
+                    break;
+            }
+        }
+    }
+    
+}
+ajaxHandler.state = 'form';
 
 function handleSearchboxType(event) {
     //dumpHeights();
@@ -229,6 +292,7 @@ function init() {
     addSearchboxHandler();
     addDebugBox();
     addDebugHandlers();
+    addAjaxHandler();
 }
 
 $(init);

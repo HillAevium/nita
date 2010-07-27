@@ -2,9 +2,14 @@
         <h1 class="page_title"><?php echo $title; ?></h1>
         <div id="sign_in" class="small">Already have an account? <a href="/account/login">Sign in!</a></div>
         <div class="gray_line"></div>
-        <div class="form">
-            <form name="regForm" action="/account/register/regtype/individual" method="POST">
-                <?php echo $form; ?>
+        <div id="forms_container">
+            <div id="error_container"></div>
+            <div id="success_message"></div>
+            <form id="verification_form" name="verification_form" action="/account/verify" method="POST">
+                <?php echo $verificationForm; ?>
+            </form>
+            <form name="registration_form" name="registration_form" action="/account/register/regtype/individual" method="POST">
+                <?php echo $registrationForm; ?>
             </form>
         </div>
         <div class="gray_line"></div>

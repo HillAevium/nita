@@ -3,7 +3,7 @@
         <div id="sign_in" class="small">Already have an account? <a href="/account/login">Sign in!</a></div>
         <div class="gray_line"></div>
         <div class="form">
-            <form name="regForm" action="/account/register/regtype/individual" method="POST">
+            <form name="regForm" action="/account/verify" method="POST">
                 <?php echo $form; ?>
             </form>
         </div>

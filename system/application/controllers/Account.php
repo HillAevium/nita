@@ -328,8 +328,9 @@ class Account extends AbstractController {
                 $this->loadViews();
                 break;
             case 'individual':
-                // get the form template for individuals
-                $args['form'] = $this->load->view('user/form_individual', '', true);
+                // get the form templates for individuals
+                $args['verificationForm'] = $this->load->view('user/form_verify', '', true);
+                $args['registrationForm'] = $this->load->view('user/form_individual', '', true);
                 
                 $views = array(
                     array('name' => 'user/reg_individual', 'args' => $args)
