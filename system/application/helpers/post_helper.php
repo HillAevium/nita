@@ -83,9 +83,10 @@ if ( ! function_exists('process_post'))
         }
 
         if(count($errors)) {
+            $returnData['errors'] = $errors;
             $errorsOut = print_r($errors,true);
             log_message('debug', 'Errors: ' . $errorsOut);
-            throw new RuntimeException($errorsOut);
+            //throw new RuntimeException($errorsOut);
         }
         
         return $returnData;
@@ -111,7 +112,7 @@ if ( ! function_exists('process_post'))
                 return true;
         }
         // TODO
-        return false;
+        return true;
     }
 }
 
