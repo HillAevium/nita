@@ -87,6 +87,11 @@ function handleSearchboxToggle() {
     $("div#search_open").toggleClass("hide");
 }
 
+function displayErrors(errorHTML) {
+    $("#errors").html(errorsHTML)
+                .show();
+}
+
 function handleSearchboxType(event) {
     //dumpHeights();
     
