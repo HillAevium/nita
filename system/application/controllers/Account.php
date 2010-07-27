@@ -135,29 +135,69 @@ class Account extends AbstractController {
         $regType = $this->getArgument('regtype');
         
         if($regType == 'individual') {
+            
+            // process the single user registration
             $this->load->model('accountProvider');
-            $profile = process_post(new UserProfileDefinition());
+            $profile = process_post(new UserProfileDefinition(true));
             
-            $this->accountProvider->createUser($profile);
+            // errors get sent back to the form
+            if(isset($profile['errors'])) {
+                return $this->sendErrors($profile['errors']);
+            }
             
-            echo "User Created";
-            echo "<pre>" . print_r($profile, true) . "</pre>";
+            // TODO Store the user account for verification
             
-            // FIXME Add in the cache for this so
-            // we can do verification via email.
-            // huh?
+            $verifyCode = $this->accountProvider->storeUser($profile);
+            
+            // TODO Send email
+            
+            // Send a 202 ACCEPTED
+            $this->output->set_status_header('202');
+            
+            echo $verifyCode;
         }
         
         // If this is a group registration
         // create a firm model and a user model
         // with this user being the firm's superuser.
         else if ($regType == 'group') {
+            $this->load->model('accountProvider');
+            $firmProfile = process_post(new FirmProfileDefinition());
+            
+            // errors get sent back to the form
+            if(isset($firmProfile['errors'])) {
+                return $this->sendErrors($firmProfile['errors']);
+            }
+            
+            // FIXME
+            // We do a little hack here to see if the SU is going
+            // to need a full or partial profile
+            // In order to do this properly I need to make it such
+            // that fields can be required only if a dependency is
+            // set, gonna have to think about this
+            // FIXME
+            /*
+            $isFull = $this->input->post('isAttendingClasses');
+            
+            $userProfile = process_post(new UserProfileDefinition($isFull));
+            */
             // TODO
+            // we need to pull the profile data for the super user
+            // with the way the definitions are this will mean two
+            // rounds of process_post but, the su may have less info
+            // than the UPDef requires so we cant use it as is.
+            $this->accountProvider->createFirm($profile);
+            
+            // Send 202 ACCEPTED
+            $this->output->set_status_header(202);
+            /*
+            echo "<pre>Firm Created\n";
+            echo print_r($firmProfile, true) . "\n";
+            
+            echo "SU Created\n";
+            //echo print_r($userProfile, true) . "\n</pre>";
+             */
         }
-        
-        // If this is a user being added to a firm
-        // create a user model and associate them
-        // with the firm.
         
         // If there was a referal page that the user
         // was sent from then embed the referal into
@@ -183,7 +223,7 @@ class Account extends AbstractController {
         // to the email provided in the registration.
     }
     
-    private function doVerify() {
+    private function verify() {
         // Get the unique identifier from the URI
         
         // Find the serialized model corresponding to
@@ -202,6 +242,18 @@ class Account extends AbstractController {
         // Since we cannot be 100% sure that the user that clicked
         // the validate link is the user that registered we
         // bounce them to the login screen for authentication.
+        
+        // Load the provider
+        $this->load->model('accountProvider');
+        
+        // Grab the verify code
+        $verifyCode = $this->input->post('verify');
+        
+        // Tell the system to verify the user
+        $this->accountProvider->verifyUser($verifyCode);
+        
+        // Send 201 CREATED
+        $this->output->set_status_header(201);
     }
     
     public function doUserUpdate() {
@@ -282,7 +334,6 @@ class Account extends AbstractController {
             $accountType = $this->getArgument('type');
             $this->showRegistrationForm($accountType);
         }
-        
     }
     
     /**
@@ -304,7 +355,7 @@ class Account extends AbstractController {
     }
     
     /**
-     * Display the user registration form
+     * Display the user registration form7
      *
      * @param string $accountType the user's account type, either 'group' or 'individual'
      */
@@ -419,9 +470,6 @@ class Account extends AbstractController {
             case 'register' :
                 $this->showRegistration();
             break;
-            case 'verify' :
-                $this->doVerify();
-            break;
             default :
                 show_404('/account/' . $method . '/');
             return;
@@ -442,11 +490,19 @@ class Account extends AbstractController {
             case 'register' :
                 $this->doRegistration();
             break;
+            case 'verify' :
+                $this->doVerify();
+            break;
             default :
                 // Since we're using remapping we have to handle the 404
                 show_404('/account/' . $method . '/');
             return;
         }
+    }
+    
+    private function sendErrors(array $errors) {
+        $this->output->set_status_header(400);
+        $this->load->view('errors', array('errors' => $errors));
     }
 }
 
